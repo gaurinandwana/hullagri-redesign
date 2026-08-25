@@ -7,7 +7,7 @@ export default function SplashScreen({ onNext }) {
   }, [])
 
   return (
-    <div style={{minHeight:"100vh",backgroundColor:"#2d8c3e",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",position:"relative"}}>
+    <div style={{height:"100vh",overflow:"hidden",backgroundColor:"#2d8c3e",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",position:"relative"}}>
       <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:"20px"}}>
         <div style={{width:"120px",height:"120px",backgroundColor:"#fff",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"60px",boxShadow:"0 8px 32px rgba(0,0,0,0.2)"}}>
           🌾

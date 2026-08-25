@@ -6,38 +6,108 @@ import FarmerProfileScreen from "./screens/FarmerProfileScreen"
 import LivestockScreen from "./screens/LivestockScreen"
 import CropSelectionScreen from "./screens/CropSelectionScreen"
 import HomeScreen from "./screens/HomeScreen"
-import SchemeDetailScreen from "./screens/SchemeDetailScreen"
+import SchemeDashboard from "./screens/SchemeDashboard"
 import NotificationsScreen from "./screens/NotificationsScreen"
+import AIChatScreen from "./screens/AIChatScreen"
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState(0)
-  // 1. Add state to hold the registered farmer's ID
   const [farmerId, setFarmerId] = useState("farmer_default")
+  const [onboardingProfile, setOnboardingProfile] = useState({
+    language_preference: "English",
+    location: {
+      state: "Punjab",
+      district: "Ludhiana",
+      village: "Kotli",
+      pincode: "141001",
+      total_land_area: 2.5,
+      land_unit: "Acres"
+    },
+    fpo_member: "No",
+    intent_to_buy_tractor: "No",
+    intent_to_buy_harvester: "No",
+    caste_category: "General",
+    is_disabled_or_bpl: "No",
+    livestock: {},
+    crops_last_year: [],
+    crops_this_year: []
+  })
 
   return (
-    <div style={{maxWidth:"390px",margin:"0 auto",minHeight:"100vh",fontFamily:"'Segoe UI', sans-serif"}}>
+    <div style={{
+      width: "100%",
+      minHeight: "100vh",
+      overflowX: "hidden",
+      overflowY: "auto",
+      backgroundColor: "#f8fafc",
+      fontFamily: "'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif",
+      display: "flex",
+      flexDirection: "column"
+    }}>
       {currentScreen === 0 && <SplashScreen onNext={() => setCurrentScreen(1)} />}
-      {currentScreen === 1 && <LanguageScreen onNext={() => setCurrentScreen(2)} />}
-      {currentScreen === 2 && <LocationScreen onNext={() => setCurrentScreen(3)} />}
-      {currentScreen === 3 && <FarmerProfileScreen onNext={() => setCurrentScreen(4)} />}
-      {currentScreen === 4 && <LivestockScreen onNext={() => setCurrentScreen(5)} />}
       
-      {/* 5. When finishing CropSelection (the final onboarding step), capture the generated/saved farmer_id */}
+      {currentScreen === 1 && (
+        <LanguageScreen 
+          onNext={(lang) => {
+            if (lang) setOnboardingProfile(prev => ({ ...prev, language_preference: lang }));
+            setCurrentScreen(2);
+          }} 
+        />
+      )}
+      
+      {currentScreen === 2 && (
+        <LocationScreen 
+          onNext={(locData) => {
+            if (locData) setOnboardingProfile(prev => ({ ...prev, location: locData }));
+            setCurrentScreen(3);
+          }} 
+          onBack={() => setCurrentScreen(1)}
+        />
+      )}
+      
+      {currentScreen === 3 && (
+        <FarmerProfileScreen 
+          onNext={(profData) => {
+            if (profData) setOnboardingProfile(prev => ({ ...prev, ...profData }));
+            setCurrentScreen(4);
+          }} 
+          onBack={() => setCurrentScreen(2)}
+        />
+      )}
+      
+      {currentScreen === 4 && (
+        <LivestockScreen 
+          onNext={(liveData) => {
+            if (liveData) setOnboardingProfile(prev => ({ ...prev, livestock: liveData }));
+            setCurrentScreen(5);
+          }} 
+          onBack={() => setCurrentScreen(3)}
+        />
+      )}
+      
       {currentScreen === 5 && (
         <CropSelectionScreen 
+          fullProfile={onboardingProfile}
           onNext={(generatedId) => {
             if (generatedId) setFarmerId(generatedId);
             setCurrentScreen(6);
           }} 
+          onBack={() => setCurrentScreen(4)}
         />
       )}
 
-      {currentScreen === 6 && <HomeScreen onNext={() => setCurrentScreen(7)} onNotifications={() => setCurrentScreen(8)} />}
+      {currentScreen === 6 && (
+        <HomeScreen 
+          onNext={() => setCurrentScreen(7)} 
+          onDashboard={() => setCurrentScreen(7)}
+          onNotifications={() => setCurrentScreen(8)}
+          onAIChat={() => setCurrentScreen(9)}
+        />
+      )}
       
-      {/* 7. Pass the stored farmerId prop directly into your SchemeDetailScreen */}
-      {currentScreen === 7 && <SchemeDetailScreen farmerId={farmerId} onBack={() => setCurrentScreen(6)} />}
-      
+      {currentScreen === 7 && <SchemeDashboard farmerId={farmerId} onBack={() => setCurrentScreen(6)} onAIChat={() => setCurrentScreen(9)} />}
       {currentScreen === 8 && <NotificationsScreen onBack={() => setCurrentScreen(6)} />}
+      {currentScreen === 9 && <AIChatScreen farmerId={farmerId} onBack={() => setCurrentScreen(6)} />}
     </div>
   )
 }
