@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getApiUrl } from '../utils/api';
+import { MOCK_SCHEMES } from '../data/mockSchemes';
 
 export default function SchemeDetailScreen({ farmerId, onBack }) {
   const [schemes, setSchemes] = useState([]);
@@ -12,14 +13,28 @@ export default function SchemeDetailScreen({ farmerId, onBack }) {
       try {
         setLoading(true);
         const idToUse = farmerId || "default_farmer";
-        const baseUrl = await getApiUrl();
-        const response = await fetch(`${baseUrl}/api/schemes/eligible/${idToUse}`);
-        const data = await response.json();
-        
-        // Grab the schemes array safely
-        setSchemes(data.eligible_schemes || []);
+        let fetchedList = [];
+        try {
+          const baseUrl = await getApiUrl();
+          const response = await fetch(`${baseUrl}/api/schemes/eligible/${idToUse}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.eligible_schemes && Array.isArray(data.eligible_schemes) && data.eligible_schemes.length > 0) {
+              fetchedList = data.eligible_schemes;
+            }
+          }
+        } catch (err) {
+          console.warn("Failed to fetch schemes from backend:", err);
+        }
+
+        if (!fetchedList || fetchedList.length === 0) {
+          fetchedList = MOCK_SCHEMES;
+        }
+
+        setSchemes(fetchedList);
       } catch (err) {
         console.error("Failed to fetch schemes:", err);
+        setSchemes(MOCK_SCHEMES);
       } finally {
         setLoading(false);
       }

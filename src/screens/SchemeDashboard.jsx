@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { getApiUrl } from '../utils/api';
+import { MOCK_SCHEMES } from '../data/mockSchemes';
 
 export default function SchemeDashboard({ farmerId = "farmer_default", onBack, onAIChat }) {
   const [schemes, setSchemes] = useState([]);
@@ -28,20 +29,32 @@ export default function SchemeDashboard({ farmerId = "farmer_default", onBack, o
     async function fetchData() {
       try {
         setLoading(true);
-        const baseUrl = await getApiUrl();
-
-        // 1. Fetch all schemes from database
-        const res = await fetch(`${baseUrl}/api/schemes`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.schemes && Array.isArray(data.schemes)) {
-            setSchemes(data.schemes);
+        let fetchedSchemes = [];
+        try {
+          const baseUrl = await getApiUrl();
+          // 1. Fetch all schemes from database
+          const res = await fetch(`${baseUrl}/api/schemes`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.schemes && Array.isArray(data.schemes) && data.schemes.length > 0) {
+              fetchedSchemes = data.schemes;
+            }
           }
+        } catch (e) {
+          console.warn("Backend API request failed, utilizing local dataset fallback:", e);
         }
+
+        // Automatic fallback to local scheme data if API request fails or returns empty
+        if (!fetchedSchemes || fetchedSchemes.length === 0) {
+          fetchedSchemes = MOCK_SCHEMES;
+        }
+
+        setSchemes(fetchedSchemes);
 
         // 2. Fetch farmer profile if available
         if (farmerId) {
           try {
+            const baseUrl = await getApiUrl();
             const profRes = await fetch(`${baseUrl}/api/farmer/${farmerId}`);
             if (profRes.ok) {
               const profData = await profRes.json();
@@ -53,7 +66,7 @@ export default function SchemeDashboard({ farmerId = "farmer_default", onBack, o
         }
       } catch (err) {
         console.error("Error loading scheme dashboard data:", err);
-        setError("Failed to fetch live schemes from backend server.");
+        setSchemes(MOCK_SCHEMES);
       } finally {
         setLoading(false);
       }
