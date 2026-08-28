@@ -11,8 +11,8 @@ import NotificationsScreen from "./screens/NotificationsScreen"
 import AIChatScreen from "./screens/AIChatScreen"
 
 export default function App() {
-  // Start on 3 (FarmerProfileScreen) as the initial entry screen
-  const [currentScreen, setCurrentScreen] = useState(3)
+  // Start on 0 (SplashScreen / HullAgri welcome screen)
+  const [currentScreen, setCurrentScreen] = useState(0)
   const [farmerId, setFarmerId] = useState("farmer_default")
   const [onboardingProfile, setOnboardingProfile] = useState({
     language_preference: "English",
