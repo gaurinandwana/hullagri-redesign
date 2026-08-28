@@ -1,23 +1,26 @@
 import { useState } from "react"
+import { MOCK_SCHEMES } from "../data/mockSchemes"
 
 export default function HomeScreen({ onNext, onNotifications, onProfile, onAIChat, onDashboard }) {
   const [search, setSearch] = useState("")
   const [activeCategory, setActiveCategory] = useState("All")
 
-  const schemes = [
-    { id:1, title:"PM Kisan Samman Nidhi", category:"Cash Transfer", amount:"₹6,000/year", tag:"Central Govt", tagColor:"#2d8c3e", borderColor:"#2d8c3e", bg:"#e8f5e9" },
-    { id:2, title:"Price Support Scheme", category:"Price Support", amount:"MSP Guaranteed", tag:"Central Govt", tagColor:"#1565c0", borderColor:"#1565c0", bg:"#e3f2fd" },
-    { id:3, title:"PM Fasal Bima Yojana", category:"Crop Insurance", amount:"Up to ₹2 Lakh", tag:"Central Govt", tagColor:"#e65100", borderColor:"#e65100", bg:"#fff3e0" },
-    { id:4, title:"Kisan Credit Card", category:"Credit", amount:"Up to ₹3 Lakh", tag:"Banking", tagColor:"#c62828", borderColor:"#c62828", bg:"#fce4ec" },
-    { id:5, title:"Sub-Mission on Agricultural Mechanization", category:"Machinery", amount:"40%-80% Subsidy", tag:"Mechanization", tagColor:"#6a1b9a", borderColor:"#6a1b9a", bg:"#f3e5f5" },
-    { id:6, title:"PM Krishi Sinchai Yojana", category:"Irrigation", amount:"Subsidized Drip/Sprinkler", tag:"Central Govt", tagColor:"#00695c", borderColor:"#00695c", bg:"#e0f7fa" },
-  ]
+  const schemes = MOCK_SCHEMES.map(s => ({
+    id: s._id || s.scheme_name,
+    title: s.scheme_name,
+    category: s.category || "General",
+    amount: s.benefits ? (s.benefits.length > 40 ? s.benefits.slice(0, 40) + "..." : s.benefits) : "Government Subsidy",
+    tag: s.scheme_type === "Central" ? "Central Govt" : `${s.state || "State"} Govt`,
+    tagColor: s.scheme_type === "Central" ? "#2d8c3e" : "#1565c0",
+    borderColor: s.scheme_type === "Central" ? "#2d8c3e" : "#1565c0",
+    bg: s.scheme_type === "Central" ? "#e8f5e9" : "#e3f2fd"
+  }))
 
-  const categories = ["All","Cash Transfer","Crop Insurance","Irrigation","Credit","Price Support","Machinery"]
+  const categories = ["All", "Direct Income Support", "Crop Insurance", "Irrigation", "Credit Support", "Farm Mechanization", "Solar & Energy", "Horticulture", "Organic Farming", "Livestock & Animal Husbandry"]
 
   const filtered = schemes.filter(s => {
-    const matchCategory = activeCategory === "All" || s.category === activeCategory
-    const matchSearch = s.title.toLowerCase().includes(search.toLowerCase())
+    const matchCategory = activeCategory === "All" || s.category.toLowerCase().includes(activeCategory.toLowerCase())
+    const matchSearch = s.title.toLowerCase().includes(search.toLowerCase()) || s.category.toLowerCase().includes(search.toLowerCase())
     return matchCategory && matchSearch
   })
 
