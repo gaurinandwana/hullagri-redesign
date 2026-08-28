@@ -388,7 +388,7 @@ export default function SchemeDashboard({ farmerId = "farmer_default", initialPr
             border: "1px solid rgba(255,255,255,0.2)"
           }}>
             <div>
-              <p style={{ margin: 0, fontSize: "12px", color: "#cbd5e1" }}>Total Schemes Dumped</p>
+              <p style={{ margin: 0, fontSize: "12px", color: "#cbd5e1" }}>Total Active Schemes</p>
               <h3 style={{ margin: "4px 0 0", fontSize: "24px", fontWeight: "800", color: "#ffffff" }}>{totalCount}</h3>
             </div>
             <div>
