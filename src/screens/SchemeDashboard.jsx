@@ -2,9 +2,9 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { getApiUrl } from '../utils/api';
 import { MOCK_SCHEMES } from '../data/mockSchemes';
 
-export default function SchemeDashboard({ farmerId = "farmer_default", onBack, onAIChat }) {
+export default function SchemeDashboard({ farmerId = "farmer_default", initialProfile, onBack, onAIChat }) {
   const [schemes, setSchemes] = useState([]);
-  const [farmerProfile, setFarmerProfile] = useState(null);
+  const [farmerProfile, setFarmerProfile] = useState(initialProfile || null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -23,6 +23,13 @@ export default function SchemeDashboard({ farmerId = "farmer_default", onBack, o
 
   // Detail Modal State
   const [selectedScheme, setSelectedScheme] = useState(null);
+
+  // Synchronize initialProfile whenever it changes
+  useEffect(() => {
+    if (initialProfile) {
+      setFarmerProfile(prev => prev ? { ...prev, ...initialProfile } : initialProfile);
+    }
+  }, [initialProfile]);
 
   // Fetch schemes and farmer profile on mount
   useEffect(() => {
@@ -58,21 +65,29 @@ export default function SchemeDashboard({ farmerId = "farmer_default", onBack, o
             const profRes = await fetch(`${baseUrl}/api/farmer/${farmerId}`);
             if (profRes.ok) {
               const profData = await profRes.json();
-              if (profData.profile) setFarmerProfile(profData.profile);
+              if (profData.profile) {
+                setFarmerProfile(prev => ({ ...(initialProfile || {}), ...profData.profile, ...(initialProfile || {}) }));
+              }
+            } else if (initialProfile) {
+              setFarmerProfile(initialProfile);
             }
           } catch (e) {
             console.log("Profile fetch notice:", e);
+            if (initialProfile) setFarmerProfile(initialProfile);
           }
+        } else if (initialProfile) {
+          setFarmerProfile(initialProfile);
         }
       } catch (err) {
         console.error("Error loading scheme dashboard data:", err);
         setSchemes(MOCK_SCHEMES);
+        if (initialProfile) setFarmerProfile(initialProfile);
       } finally {
         setLoading(false);
       }
     }
     fetchData();
-  }, [farmerId]);
+  }, [farmerId, initialProfile]);
 
   // Unique list of States for Filter dropdown
   const stateOptions = useMemo(() => {

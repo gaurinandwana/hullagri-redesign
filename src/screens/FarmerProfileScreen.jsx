@@ -32,10 +32,10 @@ export default function FarmerProfileScreen({ onNext, onBack }) {
       {/* Compact Top Green Header */}
       <div style={{ backgroundColor: "#2d8c3e", padding: "10px 24px", height: "50px", display: "flex", alignItems: "center", gap: "12px", flexShrink: 0, boxSizing: "border-box", boxShadow: "0 2px 4px rgba(0,0,0,0.08)" }}>
         {onBack && <span onClick={onBack} style={{ color: "#fff", fontSize: "18px", cursor: "pointer", marginRight: "4px" }}>←</span>}
-        <div style={{ width: "32px", height: "32px", backgroundColor: "#fff", borderRadius: "50%", display: "flex", alignItems: "center", justifyCenter: "center", fontSize: "18px" }}>👨‍🌾</div>
+        <div style={{ width: "32px", height: "32px", backgroundColor: "#fff", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>👨‍🌾</div>
         <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
           <h1 style={{ color: "#fff", fontSize: "16px", fontWeight: "700", margin: 0 }}>Farmer Profile</h1>
-          <span style={{ color: "#c8e6c9", fontSize: "12px" }}>• Step 3 of 5</span>
+          <span style={{ color: "#c8e6c9", fontSize: "12px" }}>• Step 1 of 2</span>
         </div>
       </div>
 
@@ -56,8 +56,8 @@ export default function FarmerProfileScreen({ onNext, onBack }) {
         }}>
           {/* Stepper Progress Bar */}
           <div style={{ display: "flex", gap: "6px" }}>
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} style={{ flex: 1, height: "4px", borderRadius: "2px", backgroundColor: i <= 3 ? "#2d8c3e" : "#e2e8f0" }} />
+            {[1, 2].map((i) => (
+              <div key={i} style={{ flex: 1, height: "4px", borderRadius: "2px", backgroundColor: i === 1 ? "#2d8c3e" : "#e2e8f0" }} />
             ))}
           </div>
 

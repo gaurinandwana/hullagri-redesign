@@ -11,8 +11,8 @@ import NotificationsScreen from "./screens/NotificationsScreen"
 import AIChatScreen from "./screens/AIChatScreen"
 
 export default function App() {
-  // Default to 7 (SchemeDashboard) to bypass language selection & onboarding wizard directly
-  const [currentScreen, setCurrentScreen] = useState(7)
+  // Start on 3 (FarmerProfileScreen) as the initial entry screen
+  const [currentScreen, setCurrentScreen] = useState(3)
   const [farmerId, setFarmerId] = useState("farmer_default")
   const [onboardingProfile, setOnboardingProfile] = useState({
     language_preference: "English",
@@ -45,13 +45,13 @@ export default function App() {
       display: "flex",
       flexDirection: "column"
     }}>
-      {currentScreen === 0 && <SplashScreen onNext={() => setCurrentScreen(1)} />}
+      {currentScreen === 0 && <SplashScreen onNext={() => setCurrentScreen(3)} />}
       
       {currentScreen === 1 && (
         <LanguageScreen 
           onNext={(lang) => {
             if (lang) setOnboardingProfile(prev => ({ ...prev, language_preference: lang }));
-            setCurrentScreen(2);
+            setCurrentScreen(3);
           }} 
         />
       )}
@@ -62,7 +62,7 @@ export default function App() {
             if (locData) setOnboardingProfile(prev => ({ ...prev, location: locData }));
             setCurrentScreen(3);
           }} 
-          onBack={() => setCurrentScreen(1)}
+          onBack={() => setCurrentScreen(3)}
         />
       )}
       
@@ -70,9 +70,8 @@ export default function App() {
         <FarmerProfileScreen 
           onNext={(profData) => {
             if (profData) setOnboardingProfile(prev => ({ ...prev, ...profData }));
-            setCurrentScreen(4);
+            setCurrentScreen(7);
           }} 
-          onBack={() => setCurrentScreen(2)}
         />
       )}
       
@@ -80,7 +79,7 @@ export default function App() {
         <LivestockScreen 
           onNext={(liveData) => {
             if (liveData) setOnboardingProfile(prev => ({ ...prev, livestock: liveData }));
-            setCurrentScreen(5);
+            setCurrentScreen(7);
           }} 
           onBack={() => setCurrentScreen(3)}
         />
@@ -91,9 +90,9 @@ export default function App() {
           fullProfile={onboardingProfile}
           onNext={(generatedId) => {
             if (generatedId) setFarmerId(generatedId);
-            setCurrentScreen(6);
+            setCurrentScreen(7);
           }} 
-          onBack={() => setCurrentScreen(4)}
+          onBack={() => setCurrentScreen(3)}
         />
       )}
 
@@ -106,7 +105,14 @@ export default function App() {
         />
       )}
       
-      {currentScreen === 7 && <SchemeDashboard farmerId={farmerId} onBack={() => setCurrentScreen(6)} onAIChat={() => setCurrentScreen(9)} />}
+      {currentScreen === 7 && (
+        <SchemeDashboard 
+          farmerId={farmerId} 
+          initialProfile={onboardingProfile}
+          onBack={() => setCurrentScreen(3)} 
+          onAIChat={() => setCurrentScreen(9)} 
+        />
+      )}
       {currentScreen === 8 && <NotificationsScreen onBack={() => setCurrentScreen(7)} />}
       {currentScreen === 9 && <AIChatScreen farmerId={farmerId} onBack={() => setCurrentScreen(7)} />}
     </div>
