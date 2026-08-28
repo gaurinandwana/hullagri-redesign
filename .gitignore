@@ -38,3 +38,4 @@ env/
 *.sw?
 
 .vercel
+backend/

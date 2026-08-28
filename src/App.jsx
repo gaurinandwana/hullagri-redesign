@@ -11,7 +11,8 @@ import NotificationsScreen from "./screens/NotificationsScreen"
 import AIChatScreen from "./screens/AIChatScreen"
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState(0)
+  // Default to 7 (SchemeDashboard) to bypass language selection & onboarding wizard directly
+  const [currentScreen, setCurrentScreen] = useState(7)
   const [farmerId, setFarmerId] = useState("farmer_default")
   const [onboardingProfile, setOnboardingProfile] = useState({
     language_preference: "English",
@@ -106,8 +107,8 @@ export default function App() {
       )}
       
       {currentScreen === 7 && <SchemeDashboard farmerId={farmerId} onBack={() => setCurrentScreen(6)} onAIChat={() => setCurrentScreen(9)} />}
-      {currentScreen === 8 && <NotificationsScreen onBack={() => setCurrentScreen(6)} />}
-      {currentScreen === 9 && <AIChatScreen farmerId={farmerId} onBack={() => setCurrentScreen(6)} />}
+      {currentScreen === 8 && <NotificationsScreen onBack={() => setCurrentScreen(7)} />}
+      {currentScreen === 9 && <AIChatScreen farmerId={farmerId} onBack={() => setCurrentScreen(7)} />}
     </div>
   )
 }
